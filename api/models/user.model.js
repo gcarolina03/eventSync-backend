@@ -20,6 +20,7 @@ const UserSchema = new Schema({
   },
   img_url: { 
     type: String,
+    default: 'uploads/avatar.jpg'
   }
 },
 { timestamps: false },

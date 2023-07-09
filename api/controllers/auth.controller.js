@@ -5,6 +5,7 @@ const User = require('../models/user.model')
 const signup = async (req, res) => {
   try {
     const email = req.body.email
+    console.log(req.body)
 
     const user = await User.findOne({ email })
 
@@ -13,6 +14,10 @@ const signup = async (req, res) => {
     } else {
       // password is encrypted
       req.body.password = bcrypt.hashSync(req.body.password, 10)
+       // Check if an avatar file was uploaded
+      if (req.file) {
+        req.body.img_url = req.file.path;
+      }
       // user is created
       const user = new User(req.body)
       await user.save()
