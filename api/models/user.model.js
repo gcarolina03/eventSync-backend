@@ -21,6 +21,9 @@ const UserSchema = new Schema({
   img_url: { 
     type: String,
     default: 'uploads/avatar.jpg'
+  },
+  role: {
+    type: String
   }
 },
 { timestamps: false },
