@@ -7,6 +7,10 @@ const EventSchema = new Schema({
     ref: 'user',
     required: true
   },
+  title: {
+    type: String,
+    required: true
+  },
   event_date: { 
     type: Date,
   },
@@ -18,8 +22,13 @@ const EventSchema = new Schema({
   },
   total_price: { 
     type: Number,
-    float: true
-  }
+    float: true,
+    default: 0
+  },
+  img_url: { 
+    type: String,
+    default: 'uploads/location.jpg'
+  },
 },
 { timestamps: false },
 )
