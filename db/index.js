@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const url = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}`
 
 async function connectToDatabase() {
   try {
