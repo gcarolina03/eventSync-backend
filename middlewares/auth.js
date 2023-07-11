@@ -16,4 +16,9 @@ const checkAuth = (req, res, next) => {
   })
 }
 
-module.exports = { checkAuth }
+const checkAdmin = async (req, res, next) => {
+  if(res.locals.user.role !== 'admin') { return res.status(500).send('Unauthorized') }
+  next()
+}
+
+module.exports = { checkAuth, checkAdmin }

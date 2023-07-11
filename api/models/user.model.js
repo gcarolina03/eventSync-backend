@@ -40,7 +40,10 @@ const UserSchema = new Schema({
   eventsCreated: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'event'
-  }]
+  }],
+  role: {
+    type: String
+  }
 },
 { timestamps: false },
 )
