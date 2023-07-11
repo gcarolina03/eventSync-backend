@@ -41,6 +41,10 @@ const UserSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'event'
   }],
+  servicesCreated: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'service'
+  }],
   role: {
     type: String
   }

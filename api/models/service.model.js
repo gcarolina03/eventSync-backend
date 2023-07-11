@@ -29,7 +29,7 @@ const ServiceSchema = new Schema({
   },
   img_url: { 
     type: String,
-    default: 'uploads/avatar.jpg'
+    default: 'uploads/services.jpg'
   },
   price: {
     type: Number,
