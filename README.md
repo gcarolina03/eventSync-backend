@@ -40,22 +40,77 @@ Here are some usage examples to get you started:
 Feel free to explore the application and experiment with different features.
 
 
-| Endpoint                                   | Description                                                   | Role                  |
-|--------------------------------------------|---------------------------------------------------------------|-----------------------|
-| `/api/auth/signup`                         | Creates a new user account and generates a session to         | Guest                 |
-| `/api/auth/login`                          | Authenticates user credentials and generates a session token  | Guest                 |
+| Endpoint             | Request           | Description                                                   | Role                 |
+|------------------------------------------|---------------------------------------------------------------|----------------------|
+| `/api/auth/signup`   | POST              | Creates a new user account and generates a session to         | Guest                |
+| `/api/auth/login`    | POST              | Authenticates user credentials and generates a session token  | Guest                |
+| `/api/profile`       | GET               | Fetches details of log in user                                | User                 |
+| `/api/events`        | GET               | Fetches a list of all events                                  | User                 |
+| `/api/events/:id`    | GET               | Fetches details of a specific event                           | User                 |
+| `/api/events`        | POST              | Creates a new events                                          | User                 |
+| `/api/events/:id`    | DELETE            | Deletes a specific event                                      | User                 |
+| `/api/cities`        | GET               | Fetches a list of all cities                                  | User                 |
+| `/api/cities`        | POST              | Creates a new city                                            | Admin                |
+| `/api/categories`    | GET               | Fetches a list of all categories                              | User                 |
+| `/api/categories`    | POST              | Creates a new category                                        | Admin                |
+
 
 ## Data Model
 
 ### Collection "users" 
-| Column      | Type                    |
-| ----------- | ----------------------- |
-| _id         | ObjectId (Primary Key)  |
-| first_name  | String                  |
-| last_name   | String                  |
-| email       | String (Unique)         |
-| password    | String                  |
-| img_url     | String                  |
+| Column        | Type                    |
+| ------------- | ----------------------- |
+| _id           | ObjectId (Primary Key)  |
+| first_name*   | String                  |
+| last_name     | String                  |
+| email*        | String (Unique)         |
+| password*     | String                  |
+| img_url       | String                  |
+| eventsCreated | ObjectId (ref: event)   |
+| role          | String                  |
+
+
+### Collection "events" 
+| Column        | Type                    |
+| ------------- | ----------------------- |
+| _id           | ObjectId (Primary Key)  |
+| userId*       | ObjectId (ref: users)   |
+| title*        | String                  |
+| event_date    | Date                    |
+| start_time    | String                  |
+| end_time      | String                  |
+| total_price   | Number (float)          |
+| img_url       | String                  |
+
+
+### Collection "cities" 
+| Column        | Type                    |
+| ------------- | ----------------------- |
+| _id           | ObjectId (Primary Key)  |
+| name*         | String                  |
+| postal_code*  | Number (Unique)         |
+| country*      | String                  |
+
+
+### Collection "categories" 
+| Column        | Type                    |
+| ------------- | ----------------------- |
+| _id           | ObjectId (Primary Key)  |
+| title*        | String                  |
+
+
+### Collection "services" 
+| Column        | Type                        |
+| ------------- | --------------------------- |
+| _id           | ObjectId (Primary Key)      |
+| userId*       | ObjectId (ref: users)       |
+| title         | String                      |
+| categoryId*   | ObjectId (ref: categories)  |
+| cityId*       | ObjectId (ref: cities)      |
+| max_capacity  | Number                      |
+| min_capacity  | Number                      |
+| img_url       | String                      |
+| price*        | Number (float)              |
 
 ## Author
 
