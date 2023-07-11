@@ -41,7 +41,7 @@ Feel free to explore the application and experiment with different features.
 
 
 | Endpoint             | Request           | Description                                                   | Role                 |
-|------------------------------------------|---------------------------------------------------------------|----------------------|
+|----------------------|-------------------|---------------------------------------------------------------|----------------------|
 | `/api/auth/signup`   | POST              | Creates a new user account and generates a session to         | Guest                |
 | `/api/auth/login`    | POST              | Authenticates user credentials and generates a session token  | Guest                |
 | `/api/profile`       | GET               | Fetches details of log in user                                | User                 |
