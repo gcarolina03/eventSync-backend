@@ -10,6 +10,6 @@ router.post('/', checkAuth, upload.single('avatar'), createService)
 
 router.delete('/:id', checkAuth, deleteService)
 
-router.put('/:id', checkAuth, updateService)
+router.put('/:id', checkAuth, upload.single('avatar'), updateService)
 
 module.exports = router
