@@ -41,7 +41,11 @@ const ServiceSchema = new Schema({
     type: Number,
     required: true,
     float: true
-  }
+  },
+  serviceReviews: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'review'
+  }],
 },
 { timestamps: false },
 )
