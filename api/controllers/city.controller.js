@@ -14,7 +14,7 @@ const createCity = async (req, res) => {
 
 const getCities = async (req, res) => {
   try {
-    const cities = await City.find()
+    const cities = await City.find().sort({postal_code: 1})
     return res.status(200).json({ success: true, data: cities })
   } catch (err) {
     return res.status(500).json({ err, message: 'Cities not found' })
