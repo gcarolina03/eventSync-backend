@@ -30,7 +30,7 @@ const EventSchema = new Schema({
   },
   img_url: { 
     type: String,
-    default: 'uploads/location.jpg'
+    default: 'https://res.cloudinary.com/dhveca8ba/image/upload/v1689175602/fuvym3ajx6lk21nqchbh.jpg'
   },
 },
 { timestamps: false },

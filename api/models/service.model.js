@@ -27,9 +27,15 @@ const ServiceSchema = new Schema({
   min_capacity: { 
     type: Number,
   },
+  start_time: { 
+    type: String,
+  },
+  end_time: { 
+    type: String,
+  },
   img_url: { 
     type: String,
-    default: 'uploads/services.jpg'
+    default: 'https://res.cloudinary.com/dhveca8ba/image/upload/v1689175401/dxbjiapytdozcg3qdoyw.jpg'
   },
   price: {
     type: Number,

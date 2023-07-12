@@ -35,7 +35,7 @@ const UserSchema = new Schema({
   },
   img_url: { 
     type: String,
-    default: 'uploads/avatar.jpg'
+    default: 'https://res.cloudinary.com/dhveca8ba/image/upload/v1689175163/jvpcce9vmgjqjzqcc8ec.jpg'
   },
   eventsCreated: [{
     type: mongoose.Schema.Types.ObjectId,

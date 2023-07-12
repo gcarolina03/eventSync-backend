@@ -14,7 +14,6 @@ const start = async () => {
       .use(cors())
       .use(morgan('dev'))
       .use(express.json())
-      .use('/uploads', express.static('uploads'));
     app
       .get('/', (req, res) => res.send('Welcome to EventSync API with MONGO'))
       .use('/api', router)

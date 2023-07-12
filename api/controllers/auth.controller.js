@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user.model')
+const cloudinary = require('../../db/cloudinary')
+
 
 const signup = async (req, res) => {
   try {
@@ -14,10 +16,15 @@ const signup = async (req, res) => {
     } else {
       // password is encrypted
       req.body.password = bcrypt.hashSync(req.body.password, 10)
+
        // Check if an avatar file was uploaded
+       console.log(req.file)
       if (req.file) {
-        req.body.img_url = req.file.path;
+        const result = await cloudinary.uploader.upload(req.file.path)
+        console.log(result)
+        req.body.img_url = result.secure_url;
       }
+
       // user is created
       const user = new User(req.body)
       await user.save()
