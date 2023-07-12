@@ -13,6 +13,13 @@ const createService = async (req, res) => {
       req.body.img_url = req.file.path;
     }
 
+    if(req.body.categoryId !== '64ac73ab173c1b223d20f928') {
+      delete req.body.max_capacity
+      delete req.body.min_capacity
+      delete req.body.start_time
+      delete req.body.end_time
+    }
+
     // Create a new service
     const service = new Service(req.body)
     await service.save()
@@ -43,8 +50,11 @@ const getService = async (req, res) => {
 const getAllUserService = async (req, res) => {
   try {
     // Find all services of the specified user
-    const services = await Service.find({ userId: res.locals.user.id });
-
+    const services = await Service
+                      .find({ userId: res.locals.user.id })
+                      .populate('cityId')
+                      .populate('categoryId');
+      console.log(services)
     return res.status(200).json({ success: true, data: services })
   } catch (error) {
     return res.status(500).json({ err, message: 'Services not found' })
@@ -73,6 +83,11 @@ const updateService = async (req, res) => {
     //check if user log is owner of the service
     if(res.locals.user.id !== service.userId.toString()) return res.status(500).json('Unauthorized')
     
+    // Check if an avatar file was uploaded
+    if (req.file) {
+      req.body.img_url = req.file.path;
+    }
+
     await Service.updateOne({ _id: service._id }, req.body)
 
     return res.status(200).json({ message: 'Service updated successfully' })
