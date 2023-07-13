@@ -54,7 +54,6 @@ const getAllUserService = async (req, res) => {
                       .find({ userId: res.locals.user.id })
                       .populate('cityId')
                       .populate('categoryId');
-      console.log(services)
     return res.status(200).json({ success: true, data: services })
   } catch (error) {
     return res.status(500).json({ err, message: 'Services not found' })

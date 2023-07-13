@@ -7,8 +7,6 @@ const cloudinary = require('../../db/cloudinary')
 const signup = async (req, res) => {
   try {
     const email = req.body.email
-    console.log(req.body)
-
     const user = await User.findOne({ email })
 
     if (user) {
@@ -18,10 +16,8 @@ const signup = async (req, res) => {
       req.body.password = bcrypt.hashSync(req.body.password, 10)
 
        // Check if an avatar file was uploaded
-       console.log(req.file)
       if (req.file) {
         const result = await cloudinary.uploader.upload(req.file.path)
-        console.log(result)
         req.body.img_url = result.secure_url;
       }
 
