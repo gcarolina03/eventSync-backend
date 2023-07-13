@@ -1,7 +1,14 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-var DateOnly = require('mongoose-dateonly')(mongoose)
 
+const getDate = () => {
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const day = String(currentDate.getDate()).padStart(2, '0')
+
+  return year + month + day
+}
 
 const RequestSchema = new Schema({
   serviceId: { 
@@ -16,16 +23,19 @@ const RequestSchema = new Schema({
   },
   state: {
     type: String,
-    required: true
+    required: true,
+    default: 'pending'
   },
   date_of_request: {
-    type: DateOnly,
-    required: true
+    type: String,
+    required: true,
+    default: getDate()
   }
 },
-{ timestamps: false },
-)
+{ 
+  timestamps: false
+})
 
-ReviewSchema.index({ serviceId: 1, eventId: 1 }, { unique: true });
+RequestSchema.index({ serviceId: 1, eventId: 1 }, { unique: true });
 const requestModel = mongoose.model('request', RequestSchema)
 module.exports = requestModel

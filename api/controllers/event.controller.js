@@ -25,6 +25,8 @@ const createEvent = async (req, res) => {
 const getEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id)
+                    .populate('eventRequests')
+                    .exec();
     //check if user log is owner of the event
     if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
 
@@ -40,7 +42,7 @@ const getAllUserEvents = async (req, res) => {
   try {
     // Find all events of the specified user
     const events = await Event.find({ userId: res.locals.user.id });
-
+                    
     return res.status(200).json({ success: true, data: events })
   } catch (error) {
     return res.status(500).json({ err, message: 'Events not found' })

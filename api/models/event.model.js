@@ -32,10 +32,10 @@ const EventSchema = new Schema({
     type: String,
     default: 'https://res.cloudinary.com/dhveca8ba/image/upload/v1689175602/fuvym3ajx6lk21nqchbh.jpg'
   },
-  eventRequests: {
+  eventRequests: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'request',
-  }
+    ref: 'request'
+  }],
 },
 { timestamps: false },
 )

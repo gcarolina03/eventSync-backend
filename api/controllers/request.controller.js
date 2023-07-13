@@ -28,26 +28,15 @@ const createRequest  = async (req, res) => {
 
       // Add the request to the event's eventRequests array
       event.eventRequests.push(request._id)
-      await service.save()
+      await event.save()
 
-      res.status(200).json({ review })
+      res.status(200).json({ request })
     }
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: 'Failed to save the review' })
-  }
-}
-
-const updateReview = async (req, res) => {
-  try {
-    await Review.updateOne({ _id: req.params.id }, {thumb: req.body.thumb})
-
-    res.status(200).json({ message: 'Review updated successfully' })
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to update the review' })
+    res.status(500).json({ message: 'Failed to save the request' })
   }
 }
 
 
-module.exports = { createReview, updateReview }
+module.exports = { createRequest }
