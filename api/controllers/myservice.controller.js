@@ -54,7 +54,7 @@ const getAllUserService = async (req, res) => {
                       .find({ userId: res.locals.user.id })
                       .populate('cityId')
                       .populate('categoryId')
-                      .populate('serviceReviews')
+                      .populate('serviceReviews', 'thumb userId')
                       .exec();
     return res.status(200).json({ success: true, data: services })
   } catch (error) {

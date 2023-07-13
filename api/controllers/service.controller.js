@@ -7,7 +7,7 @@ const getAllServices = async (req, res) => {
                       .find()
                       .populate('cityId')
                       .populate('categoryId')
-                      .populate('serviceReviews', 'thumb')
+                      .populate('serviceReviews', 'thumb userId')
                       .exec();
     return res.status(200).json({ success: true, data: services })
   } catch (error) {
