@@ -1,8 +1,9 @@
 const router = require('express').Router()
 const { createReview, updateReview } = require('../controllers/review.controller')
+const { checkAuth } = require('../../middlewares/auth') 
 
-router.post('/', createReview)
+router.post('/', checkAuth, createReview)
 
-router.put('/:id', updateReview)
+router.put('/:id', checkAuth, updateReview)
 
 module.exports = router
