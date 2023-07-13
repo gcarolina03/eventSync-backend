@@ -3,6 +3,6 @@ const { createCategory, getCategories } = require('../controllers/category.contr
 const { checkAuth, checkAdmin } = require('../../middlewares/auth') 
 
 router.post('/', checkAuth, checkAdmin, createCategory)
-router.get('/', checkAuth, getCategories)
+router.get('/', getCategories)
 
 module.exports = router
