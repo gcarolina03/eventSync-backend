@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const getDate = () => {
   const currentDate = new Date()
   const year = currentDate.getFullYear()
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const month = String(currentDate.getMonth()).padStart(2, '0')
   const day = String(currentDate.getDate()).padStart(2, '0')
 
   return year + month + day
@@ -18,7 +18,7 @@ const RequestSchema = new Schema({
   },
   eventId: { 
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'event',
     required: true
   },
   state: {
