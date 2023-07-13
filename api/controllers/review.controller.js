@@ -15,7 +15,7 @@ const createReview  = async (req, res) => {
     const existingReview = await Review.findOne({ serviceId: req.body.serviceId, userId: req.body.userId })
 
     if (existingReview) {
-      return res.status(200).json('exist')
+      return res.status(200).json({reviewId: existingReview._id})
     } else {
       // Create a new review instance
       const review = new Review(req.body)
@@ -24,7 +24,7 @@ const createReview  = async (req, res) => {
       await review.save()
 
       // Add the review to the service's serviceReview array
-      service.eventsCreated.push(review._id)
+      service.serviceReviews.push(review._id)
       await service.save()
 
       res.status(200).json({ review })
@@ -37,16 +37,7 @@ const createReview  = async (req, res) => {
 
 const updateReview = async (req, res) => {
   try {
-    // Find the existing review for the user and service
-    const existingReview = await Review.findOne({ serviceId: req.body.serviceId, userId: req.body.userId })
-
-    if (!existingReview) {
-      return res.status(404).json({ message: 'Review not found' })
-    }
-
-    // Save the updated review
-    await existingReview.save();
-    await Review.updateOne({ _id: existingReview._id }, {thumb: req.body.thumb})
+    await Review.updateOne({ _id: req.params.id }, {thumb: req.body.thumb})
 
     res.status(200).json({ message: 'Review updated successfully' })
   } catch (error) {

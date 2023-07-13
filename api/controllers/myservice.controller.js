@@ -53,7 +53,9 @@ const getAllUserService = async (req, res) => {
     const services = await Service
                       .find({ userId: res.locals.user.id })
                       .populate('cityId')
-                      .populate('categoryId');
+                      .populate('categoryId')
+                      .populate('serviceReviews')
+                      .exec();
     return res.status(200).json({ success: true, data: services })
   } catch (error) {
     return res.status(500).json({ err, message: 'Services not found' })
