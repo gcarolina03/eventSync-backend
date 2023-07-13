@@ -25,7 +25,14 @@ const createEvent = async (req, res) => {
 const getEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id)
-                    .populate('eventRequests')
+                    .populate({
+                      path: 'eventRequests',
+                      populate: {
+                        path: 'serviceId',
+                        populate: {
+                          path: 'categoryId cityId',
+                        }
+                      }})
                     .exec();
     //check if user log is owner of the event
     if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
