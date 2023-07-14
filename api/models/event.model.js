@@ -36,6 +36,20 @@ const EventSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'request'
   }],
+  guestList : [{
+    _id: mongoose.Types.ObjectId,
+    name: {
+      type: String,
+      required: true
+    },
+    phone: {
+      type: String,
+    },
+    number: {
+      type: Number,
+      default: 1 
+    }
+  }]
 },
 { timestamps: false },
 )

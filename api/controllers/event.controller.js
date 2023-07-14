@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose')
 const Event = require('../models/event.model')
 const User = require('../models/user.model')
 
@@ -87,4 +88,26 @@ const updateEvent = async (req, res) => {
   }
 }
 
-module.exports = { createEvent, getEvent, getAllUserEvents, deleteEvent, updateEvent }
+const addGuestToList = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id)
+    if (!event) return res.status(404).json({ error: 'Event not found' })
+
+
+    //check if user log is owner of the event
+    if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
+
+    req.body._id = new mongoose.Types.ObjectId()
+    if(req.body.number == 0) req.body.number = 1
+
+    event.guestList.push(req.body)
+
+    event.save()
+    return res.status(200).json({ message: 'Event guest list updated successfully' })
+  } catch (error) {
+    return res.status(500).json({ error, message: 'Failed to update event guest list' });
+    
+  }
+}
+
+module.exports = { createEvent, getEvent, getAllUserEvents, deleteEvent, updateEvent, addGuestToList }
