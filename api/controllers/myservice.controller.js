@@ -1,5 +1,7 @@
 const Service = require('../models/service.model')
 const User = require('../models/user.model')
+const cloudinary = require('../../db/cloudinary')
+
 
 const createService = async (req, res) => {
   try {
@@ -8,9 +10,10 @@ const createService = async (req, res) => {
     const user = await User.findById(req.body.userId)
     if (!user) return res.status(404).json({ error: 'User not found' })
 
-    // Check if an avatar file was uploaded
+     // Check if an avatar file was uploaded
     if (req.file) {
-      req.body.img_url = req.file.path;
+      const result = await cloudinary.uploader.upload(req.file.path)
+      req.body.img_url = result.secure_url;
     }
 
     if(req.body.categoryId !== '64ac73ab173c1b223d20f928') {
@@ -52,12 +55,11 @@ const getAllUserService = async (req, res) => {
     // Find all services of the specified user
     const services = await Service
                       .find({ userId: res.locals.user.id })
-                      .populate('cityId')
                       .populate('categoryId')
                       .populate('serviceReviews', 'thumb userId')
                       .exec();
     return res.status(200).json({ success: true, data: services })
-  } catch (error) {
+  } catch (err) {
     return res.status(500).json({ err, message: 'Services not found' })
   }
 }
