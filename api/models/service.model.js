@@ -16,10 +16,13 @@ const ServiceSchema = new Schema({
     ref: 'category',
     required: true
   },
-  cityId: { 
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'city',
-    required: true
+  latitude: { 
+    type: Number,
+    required: true,
+  },
+  longitude: { 
+    type: Number, 
+    required: true 
   },
   max_capacity: { 
     type: Number,

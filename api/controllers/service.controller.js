@@ -5,7 +5,6 @@ const getAllServices = async (req, res) => {
     // Find all services
     const services = await Service
                       .find()
-                      .populate('cityId')
                       .populate('categoryId')
                       .populate('serviceReviews', 'thumb userId')
                       .exec();

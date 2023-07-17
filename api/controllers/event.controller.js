@@ -31,7 +31,7 @@ const getEvent = async (req, res) => {
                       populate: {
                         path: 'serviceId',
                         populate: {
-                          path: 'categoryId cityId',
+                          path: 'categoryId',
                         }
                       }})
                     .exec();
