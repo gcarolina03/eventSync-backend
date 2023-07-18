@@ -110,4 +110,27 @@ const addGuestToList = async (req, res) => {
   }
 }
 
-module.exports = { createEvent, getEvent, getAllUserEvents, deleteEvent, updateEvent, addGuestToList }
+const RemoveGuestFromList = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id)
+    if (!event) return res.status(404).json({ error: 'Event not found' })
+
+    //check if user log is owner of the event
+    if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
+
+    const guestId = req.params.guestId;
+
+    // Remove the guest from the guestList array
+    event.guestList.pull({ _id: guestId });
+
+    await event.save();
+
+    event.save()
+    return res.status(200).json({ message: 'Event guest list updated successfully' })
+  } catch (error) {
+    return res.status(500).json({ error, message: 'Failed to update event guest list' });
+    
+  }
+}
+
+module.exports = { createEvent, getEvent, getAllUserEvents, deleteEvent, updateEvent, addGuestToList, RemoveGuestFromList }
