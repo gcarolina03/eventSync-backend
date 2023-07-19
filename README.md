@@ -154,9 +154,9 @@ EventSync is was created by:
 
 This project was built using:
 
-- NodeJS: Runtime environment that allows executing server-side applications using JavaScript.
-- Mongoose: A MongoDB object modeling tool for NodeJS, providing a simple and flexible way to interact with MongoDB databases.
-- Express: A fast and minimalist web application framework for NodeJS, enabling the creation of robust and scalable web applications and APIs.
+- **NodeJS**: Runtime environment that allows executing server-side applications using JavaScript.
+- **Mongoose**: MongoDB object modeling tool for NodeJS, providing a simple and flexible way to interact with MongoDB databases.
+- **Express**: Fast and minimalist web application framework for NodeJS, enabling the creation of robust and scalable web applications and APIs.
 
 
 ## Contributing
