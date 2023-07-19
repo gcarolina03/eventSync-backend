@@ -8,7 +8,6 @@ const { router } = require('./api/routes')
 
 connectToDatabase()
 
-const express_port = process.env.EXPRESS_PORT
 const start = async () => {
   try {
     app
@@ -18,10 +17,10 @@ const start = async () => {
     app
       .get('/', (req, res) => res.send('Welcome to EventSync API with MONGO'))
       .use('/api', router)
-      .listen(express_port || 2222)
-    console.info(`Mongo API running on port ${express_port}`)
+      .listen(process.env.EXPRESS_PORT || 2222)
+    console.info(`Mongo API running on port ${process.env.EXPRESS_PORT}`)
   } catch (err) {
-    throw new Error(`Cannot start mongo on port ${express_port}, ${err}`)
+    throw new Error(`Cannot start mongo on port ${process.env.EXPRESS_PORT}, ${err}`)
   }
 }
 
