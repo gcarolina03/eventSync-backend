@@ -145,7 +145,7 @@ Feel free to explore the application and experiment with different features.
 
 ## Author
 
-EventSync is was created by:
+EventSync was created by:
 
 - Carolina (https://github.com/gcarolina03)
 
