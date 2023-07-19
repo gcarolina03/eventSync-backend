@@ -41,31 +41,31 @@ Here are some usage examples to get you started:
 Feel free to explore the application and experiment with different features.
 
 
-| Endpoint                          | Request           | Description                                                   | Role                 |
-|-----------------------------------|-------------------|---------------------------------------------------------------|----------------------|
-| `/api/auth/signup`                | POST              | Creates a new user account and generates a session to         | Guest                |
-| `/api/auth/login`                 | POST              | Authenticates user credentials and generates a session token  | Guest                |
-| `/api/profile`                    | GET               | Fetches details of the logged user                            | User                 |
-| `/api/profile/services`           | GET               | Fetches details of all services of the logged user            | User                 |
-| `/api/profile/services/:id`       | GET               | Fetches details of a specific service of the logged user      | User                 |
-| `/api/profile/services`           | POST              | Creates a new service                                         | User                 |
-| `/api/profile/services/:id`       | DELETE            | Deletes a specific service                                    | User                 |
-| `/api/profile/services/:id`       | PUT               | Update a specific service                                     | User                 |
-| `/api/events`                     | GET               | Fetches a list of all events of the logged user               | User                 |
-| `/api/events/:id`                 | GET               | Fetches details of a specific event of the logged user        | User                 |
-| `/api/events`                     | POST              | Creates a new event                                           | User                 |
-| `/api/events/:id`                 | DELETE            | Deletes a specific event                                      | User                 |
-| `/api/events/:id/guest/:guestId`  | DELETE            | Deletes a specific guest from the list of the event           | User                 |
-| `/api/events/:id`                 | PUT               | Update a specific event                                       | User                 |
-| `/api/events/:id/guest/:guestId`  | PUT               | Update a specific guest from the list of the event            | User                 |
-| `/api/categories`                 | GET               | Fetches a list of all categories                              | Guest                |
-| `/api/categories`                 | POST              | Creates a new category                                        | Admin                |
-| `/api/services`                   | GET               | Fetches a list of all services                                | Guest                |
-| `/api/reviews`                    | POST              | Creates a new review                                          | User                 |
-| `/api/reviews/:id`                | PUT               | Update a existing review                                      | User                 |
-| `/api/requests`                   | GET               | Fetches a list of all requests service of the logged user     | User                 |
-| `/api/requests`                   | POST              | Creates a new request                                         | User                 |
-| `/api/requests/:id`               | PUT               | Update state of a request                                     | User                 |
+| Endpoint                      | Request           | Description                                                   | Role                 |
+|-------------------------------|-------------------|---------------------------------------------------------------|----------------------|
+| `/auth/signup`                | POST              | Creates a new user account and generates a session to         | Guest                |
+| `/auth/login`                 | POST              | Authenticates user credentials and generates a session token  | Guest                |
+| `/profile`                    | GET               | Fetches details of the logged user                            | User                 |
+| `/profile/services`           | GET               | Fetches details of all services of the logged user            | User                 |
+| `/profile/services/:id`       | GET               | Fetches details of a specific service of the logged user      | User                 |
+| `/profile/services`           | POST              | Creates a new service                                         | User                 |
+| `/profile/services/:id`       | DELETE            | Deletes a specific service                                    | User                 |
+| `/profile/services/:id`       | PUT               | Update a specific service                                     | User                 |
+| `/events`                     | GET               | Fetches a list of all events of the logged user               | User                 |
+| `/events/:id`                 | GET               | Fetches details of a specific event of the logged user        | User                 |
+| `/events`                     | POST              | Creates a new event                                           | User                 |
+| `/events/:id`                 | DELETE            | Deletes a specific event                                      | User                 |
+| `/events/:id/guest/:guestId`  | DELETE            | Deletes a specific guest from the list of the event           | User                 |
+| `/events/:id`                 | PUT               | Update a specific event                                       | User                 |
+| `/events/:id/guest/:guestId`  | PUT               | Update a specific guest from the list of the event            | User                 |
+| `/categories`                 | GET               | Fetches a list of all categories                              | Guest                |
+| `/categories`                 | POST              | Creates a new category                                        | Admin                |
+| `/services`                   | GET               | Fetches a list of all services                                | Guest                |
+| `/reviews`                    | POST              | Creates a new review                                          | User                 |
+| `/reviews/:id`                | PUT               | Update a existing review                                      | User                 |
+| `/requests`                   | GET               | Fetches a list of all requests service of the logged user     | User                 |
+| `/requests`                   | POST              | Creates a new request                                         | User                 |
+| `/requests/:id`               | PUT               | Update state of a request                                     | User                 |
 
 
 ## Data Model
