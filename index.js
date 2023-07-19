@@ -17,6 +17,7 @@ const start = async () => {
     app
       .get('/', (req, res) => res.send('Welcome to EventSync API with MONGO'))
       .use('/api', router)
+      .listen(process.env.EXPRESS_PORT || 2222)
     console.info(`Mongo API running on port ${process.env.EXPRESS_PORT}`)
   } catch (err) {
     throw new Error(`Cannot start mongo on port ${process.env.EXPRESS_PORT}, ${err}`)
