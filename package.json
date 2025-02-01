@@ -19,6 +19,9 @@
     "url": "https://github.com/gcarolina03/eventSync/issues"
   },
   "homepage": "https://github.com/gcarolina03/eventSync#readme",
+  "engines": {
+    "node": "18"
+  },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cloudinary": "^2.5.1",
