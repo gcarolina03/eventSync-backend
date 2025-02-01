@@ -1,136 +1,245 @@
-const { default: mongoose } = require('mongoose')
-const Event = require('../models/event.model')
-const User = require('../models/user.model')
+const { default: mongoose } = require("mongoose");
+const Event = require("../models/event.model");
+const User = require("../models/user.model");
+
+const isUserAuthorized = (userId, eventUserId) => userId.toString() == eventUserId.toString();
 
 const createEvent = async (req, res) => {
   try {
-    if(!req.body.userId) { req.body.userId = res.locals.user.id }
+    const { userId = res.locals.user.id, ...eventData } = req.body;
+
     // Check if the user exists
-    const user = await User.findById(req.body.userId)
-    if (!user) return res.status(404).json({ error: 'User not found' })
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
     // Create a new event
-    const event = new Event(req.body)
-    await event.save()
+    const event = new Event(eventData);
+    await event.save();
 
     // Add the event to the user's eventsCreated array
     user.eventsCreated.push(event._id);
-    await user.save()
+    await user.save();
 
-    return res.status(200).json({ event })
+    return res.status(201).json({
+      success: true,
+      event,
+    });
   } catch (err) {
-    return res.status(500).json({ err, message: 'Event not created' })
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Event not created",
+    });
   }
-}
+};
 
 const getEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id)
-                    .populate({
-                      path: 'eventRequests',
-                      populate: {
-                        path: 'serviceId',
-                        populate: {
-                          path: 'categoryId',
-                        }
-                      }})
-                    .exec();
-    //check if user log is owner of the event
-    if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
+      .populate({
+        path: "eventRequests",
+        populate: {
+          path: "serviceId",
+          populate: {
+            path: "categoryId",
+          },
+        },
+      })
+      .exec();
 
-    if (!event) return res.status(404).json({ err, message: 'Event not found' })
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
+    }
 
-    return res.status(200).json({ event })
+    // Check if user is authorized (owner of the event)
+    if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      event,
+    });
   } catch (err) {
-    return res.status(500).json({err, message: 'Event not found!'})
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Failed to retrieve event",
+    });
   }
-}
+};
 
 const getAllUserEvents = async (req, res) => {
   try {
-    // Find all events of the specified user
     const events = await Event.find({ userId: res.locals.user.id });
-                    
-    return res.status(200).json({ success: true, data: events })
-  } catch (error) {
-    return res.status(500).json({ err, message: 'Events not found' })
+    return res.status(200).json({
+      success: true,
+      data: events,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Failed to retrieve events",
+    });
   }
-}
+};
 
 const deleteEvent = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id)
-    if (!event) return res.status(404).json({ error: 'Event not found' })
-    //check if user log is owner of the event
-    if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
+    }
 
-    await Event.deleteOne({ _id: event._id})
-    return res.status(200).json({ message: 'Event deleted successfully' })
+    // Check if user is authorized (owner of the event)
+    if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    await Event.deleteOne({ _id: event._id });
+    return res.status(200).json({
+      success: true,
+      message: "Event deleted successfully",
+    });
   } catch (err) {
-    return res.status(500).json({ err, message: 'Failed to delete event' })
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Failed to delete event",
+    });
   }
-}
+};
 
 const updateEvent = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id)
-    if (!event) return res.status(404).json({ error: 'Event not found' })
-  
-    //check if user log is owner of the event
-    if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
-    
-    if( req.body.event_date ) delete req.body.event_date
-    await Event.updateOne({ _id: event._id }, req.body)
+    const event = await Event.findById(req.params.id);
+    if (!event)
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
 
-    return res.status(200).json({ message: 'Event updated successfully' })
+    // Check if user is authorized (owner of the event)
+    if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    if (req.body.event_date) {
+      delete req.body.event_date;
+    }
+
+    await Event.updateOne({ _id: event._id }, req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: "Event updated successfully",
+    });
   } catch (err) {
-    return res.status(500).json({ err, message: 'Failed to update event' });
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Failed to update event",
+    });
   }
-}
+};
 
 const addGuestToList = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id)
-    if (!event) return res.status(404).json({ error: 'Event not found' })
+    const event = await Event.findById(req.params.id);
+    if (!event)
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
 
+    // Check if user is authorized (owner of the event)
+    if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-    //check if user log is owner of the event
-    if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
+    req.body._id = new mongoose.Types.ObjectId();
+    req.body.number = req.body.number || 1;
 
-    req.body._id = new mongoose.Types.ObjectId()
-    if(req.body.number == 0) req.body.number = 1
-
-    event.guestList.push(req.body)
-
-    event.save()
-    return res.status(200).json({ message: 'Event guest list updated successfully' })
-  } catch (error) {
-    return res.status(500).json({ error, message: 'Failed to update event guest list' });
-    
-  }
-}
-
-const RemoveGuestFromList = async (req, res) => {
-  try {
-    const event = await Event.findById(req.params.id)
-    if (!event) return res.status(404).json({ error: 'Event not found' })
-
-    //check if user log is owner of the event
-    if(res.locals.user.id !== event.userId.toString()) return res.status(500).json('Unauthorized')
-
-    const guestId = req.params.guestId;
-
-    // Remove the guest from the guestList array
-    event.guestList.pull({ _id: guestId });
-
+    event.guestList.push(req.body);
     await event.save();
 
-    event.save()
-    return res.status(200).json({ message: 'Event guest list updated successfully' })
-  } catch (error) {
-    return res.status(500).json({ error, message: 'Failed to update event guest list' });
-    
+    return res.status(200).json({
+      success: true,
+      message: "Event guest list updated successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Failed to update guest list",
+    });
   }
-}
+};
 
-module.exports = { createEvent, getEvent, getAllUserEvents, deleteEvent, updateEvent, addGuestToList, RemoveGuestFromList }
+const removeGuestFromList = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event)
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
+
+    // Check if user is authorized (owner of the event)
+    if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const guestId = req.params.guestId;
+    event.guestList.pull({ _id: guestId }); // Remove the guest from the guestList array
+    await event.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Event guest list updated successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Failed to update event guest list",
+    });
+  }
+};
+
+module.exports = {
+  createEvent,
+  getEvent,
+  getAllUserEvents,
+  deleteEvent,
+  updateEvent,
+  addGuestToList,
+  removeGuestFromList,
+};

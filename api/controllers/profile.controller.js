@@ -1,9 +1,16 @@
 const showProfile = async (req, res) => {
   try {
-    return res.json( res.locals.user )
+    return res.status(200).json({
+      success: true,
+      user: res.locals.user,
+    });
   } catch (err) {
-    return res.status(404).send('Error: User not found') 
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Error fetching user profile",
+    });
   }
-}
+};
 
-module.exports = { showProfile }
+module.exports = { showProfile };

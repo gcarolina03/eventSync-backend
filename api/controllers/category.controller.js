@@ -1,24 +1,45 @@
-const Category = require('../models/category.model')
+const Category = require("../models/category.model");
 
 const createCategory = async (req, res) => {
   try {
-    // Create a new category
-    const category = new Category(req.body)
-    await category.save()
+    const { title } = req.body;
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: "Title is required",
+      });
+    }
 
-    return res.status(200).json({ category })
+    const category = new Category(req.body);
+    await category.save();
+
+    return res.status(201).json({
+      success: true,
+      category,
+    });
   } catch (err) {
-    return res.status(500).json({ err, message: 'Category not created' })
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Category not created",
+    });
   }
-}
+};
 
 const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find()
-    return res.status(200).json({ success: true, data: categories })
+    const categories = await Category.find();
+    return res.status(200).json({
+      success: true,
+      data: categories,
+    });
   } catch (err) {
-    return res.status(500).json({ err, message: 'Categories not found' })
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Categories not found",
+    });
   }
-}
+};
 
-module.exports = { createCategory, getCategories }
+module.exports = { createCategory, getCategories };
