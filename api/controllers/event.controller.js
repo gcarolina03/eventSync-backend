@@ -85,7 +85,7 @@ const getAllUserEvents = async (req, res) => {
     const events = await Event.find({ userId: res.locals.user.id });
     return res.status(200).json({
       success: true,
-      data: events,
+      events,
     });
   } catch (err) {
     return res.status(500).json({
