@@ -1,9 +1,18 @@
+const { default: mongoose } = require("mongoose");
 const Category = require("../models/category.model");
 
 const createCategory = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const { title } = req.body;
+
     if (!title) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(400).json({
         success: false,
         message: "Title is required",
@@ -11,13 +20,19 @@ const createCategory = async (req, res) => {
     }
 
     const category = new Category(req.body);
-    await category.save();
+    await category.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(201).json({
       success: true,
       category,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,

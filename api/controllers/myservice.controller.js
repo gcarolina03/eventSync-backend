@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Service = require("../models/service.model");
 const User = require("../models/user.model");
 const cloudinary = require("../../db/cloudinary");
@@ -5,7 +6,11 @@ const cloudinary = require("../../db/cloudinary");
 const isUserAuthorized = (userId, serviceUserId) => userId.toString() == serviceUserId.toString();
 
 const createService = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const {
       userId = res.locals.user.id,
       categoryId,
@@ -13,8 +18,11 @@ const createService = async (req, res) => {
     } = req.body;
 
     // Check if the user exists
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).session(session);
     if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "User not found",
@@ -37,17 +45,23 @@ const createService = async (req, res) => {
 
     // Create a new service
     const service = new Service(serviceData);
-    await service.save();
+    await service.save({ session });
 
     // Add the service to the user's servicesCreated array
     user.servicesCreated.push(service._id);
-    await user.save();
+    await user.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(201).json({
       success: true,
       service,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,
@@ -108,9 +122,16 @@ const getAllUserService = async (req, res) => {
 };
 
 const deleteService = async (req, res) => {
+  const session = await mongoose.startSession();
+  
   try {
-    const service = await Service.findById(req.params.id);
+    session.startTransaction();
+
+    const service = await Service.findById(req.params.id).session(session);
     if (!service) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Service not found",
@@ -119,18 +140,34 @@ const deleteService = async (req, res) => {
 
     // Check if user is authorized (owner of the service)
     if (!isUserAuthorized(res.locals.user.id, service.userId)) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(403).json({
         success: false,
         message: "Unauthorized",
       });
     }
 
-    await Service.deleteOne({ _id: service._id });
+    await Service.deleteOne({ _id: service._id }, { session });
+
+    await User.updateOne(
+      { _id: service.userId },
+      { $pull: { servicesCreated: service._id } },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
     return res.status(200).json({
       success: true,
       message: "Service deleted successfully",
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,
@@ -140,9 +177,16 @@ const deleteService = async (req, res) => {
 };
 
 const updateService = async (req, res) => {
+  const session = await mongoose.startSession();
+  
   try {
-    const service = await Service.findById(req.params.id);
+    session.startTransaction();
+
+    const service = await Service.findById(req.params.id).session(session);
     if (!service) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Service not found",
@@ -151,6 +195,9 @@ const updateService = async (req, res) => {
 
     // Check if user is authorized (owner of the service)
     if (!isUserAuthorized(res.locals.user.id, service.userId)) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(403).json({
         success: false,
         message: "Unauthorized",
@@ -162,12 +209,19 @@ const updateService = async (req, res) => {
       req.body.img_url = req.file.path;
     }
 
-    await Service.updateOne({ _id: service._id }, req.body);
+    await Service.updateOne({ _id: service._id }, req.body, { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
     return res.status(200).json({
       success: true,
       message: "Service updated successfully",
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    
     return res.status(500).json({
       success: false,
       error: err.message,

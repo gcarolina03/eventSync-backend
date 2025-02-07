@@ -1,15 +1,23 @@
+const { default: mongoose } = require("mongoose");
 const Request = require("../models/request.model");
 const Service = require("../models/service.model");
 const Event = require("../models/event.model");
 const User = require("../models/user.model");
 
 const createRequest = async (req, res) => {
+  const session = await mongoose.startSession();
+  
   try {
+    session.startTransaction();
+
     const { serviceId, eventId } = req.body;
 
     // Check if the service exists
-    const service = await Service.findById(serviceId);
+    const service = await Service.findById(serviceId).session(session);
     if (!service) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Service not found",
@@ -17,8 +25,11 @@ const createRequest = async (req, res) => {
     }
 
     // Check if the event exists
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).session(session);
     if (!event) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Event not found",
@@ -26,8 +37,11 @@ const createRequest = async (req, res) => {
     }
 
     // Check for an existing request
-    const existingRequest = await Request.findOne({ serviceId, eventId });
+    const existingRequest = await Request.findOne({ serviceId, eventId }).session(session);
     if (existingRequest) {
+      await session.commitTransaction();
+      session.endSession();
+
       return res.status(200).json({
         success: true,
         requestId: existingRequest._id,
@@ -36,17 +50,23 @@ const createRequest = async (req, res) => {
 
     // Create and save a new request
     const request = new Request(req.body);
-    await request.save();
+    await request.save({ session });
 
     // Add the request to the event's eventRequests array
     event.eventRequests.push(request._id);
-    await event.save();
+    await event.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(201).json({
       success: true,
       request,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,
@@ -94,16 +114,23 @@ const getAllUserRequests = async (req, res) => {
 };
 
 const updateRequestState = async (req, res) => {
+  const session = await mongoose.startSession();
+  
   try {
+    session.startTransaction();
+
     const { id } = req.params;
     const { state } = req.body;
 
     const request = await Request.findById(id).populate({
       path: "serviceId",
       populate: { path: "categoryId" },
-    });
+    }).session(session);
 
     if (!request) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Request not found",
@@ -112,14 +139,20 @@ const updateRequestState = async (req, res) => {
 
     //check if user log is owner of the service in the request
     if (res.locals.user.id != request.serviceId.userId.toString()) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(403).json({
         success: false,
         message: "Unauthorized",
       });
     }
 
-    const event = await Event.findById(request.eventId);
+    const event = await Event.findById(request.eventId).session(session);
     if (!event) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Event not found",
@@ -127,21 +160,33 @@ const updateRequestState = async (req, res) => {
     }
 
     let dataEvent = {};
-    if (request.serviceId.categoryId.title == "Location" && state == "confirmed") {
-      dataEvent = { total_price: event.total_price + request.serviceId.price, img_url: request.serviceId.img_url };
+    if (
+      request.serviceId.categoryId.title == "Location" &&
+      state == "confirmed"
+    ) {
+      dataEvent = {
+        total_price: event.total_price + request.serviceId.price,
+        img_url: request.serviceId.img_url,
+      };
     } else if (state == "confirmed") {
       dataEvent = { total_price: event.total_price + request.serviceId.price };
     }
 
-		// Update the event and request state
-    await Event.updateOne({ _id: event._id }, dataEvent);
-    await Request.updateOne({ _id: request._id }, { state: req.body.state });
+    // Update the event and request state
+    await Event.updateOne({ _id: event._id }, dataEvent, { session });
+    await Request.updateOne({ _id: request._id }, { state: req.body.state }, { session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(200).json({
       success: false,
       request,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    
     return res.status(500).json({
       success: false,
       error: err.message,

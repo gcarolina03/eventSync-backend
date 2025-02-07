@@ -5,12 +5,19 @@ const User = require("../models/user.model");
 const isUserAuthorized = (userId, eventUserId) => userId.toString() == eventUserId.toString();
 
 const createEvent = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const { userId = res.locals.user.id, ...eventData } = req.body;
 
     // Check if the user exists
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).session(session);
     if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "User not found",
@@ -19,17 +26,23 @@ const createEvent = async (req, res) => {
 
     // Create a new event
     const event = new Event(eventData);
-    await event.save();
+    await event.save({ session });
 
     // Add the event to the user's eventsCreated array
     user.eventsCreated.push(event._id);
-    await user.save();
+    await user.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(201).json({
       success: true,
       event,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,
@@ -97,9 +110,16 @@ const getAllUserEvents = async (req, res) => {
 };
 
 const deleteEvent = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
-    const event = await Event.findById(req.params.id);
+    session.startTransaction();
+
+    const event = await Event.findById(req.params.id).session(session);
     if (!event) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Event not found",
@@ -108,18 +128,34 @@ const deleteEvent = async (req, res) => {
 
     // Check if user is authorized (owner of the event)
     if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(403).json({
         success: false,
         message: "Unauthorized",
       });
     }
 
-    await Event.deleteOne({ _id: event._id });
+    await Event.deleteOne({ _id: event._id }, { session });
+
+    await User.updateOne(
+      { _id: event.userId },
+      { $pull: { eventsCreated: event._id } },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
     return res.status(200).json({
       success: true,
       message: "Event deleted successfully",
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,
@@ -129,16 +165,27 @@ const deleteEvent = async (req, res) => {
 };
 
 const updateEvent = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
-    const event = await Event.findById(req.params.id);
-    if (!event)
+    session.startTransaction();
+
+    const event = await Event.findById(req.params.id).session(session);
+    if (!event) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Event not found",
       });
+    }
 
     // Check if user is authorized (owner of the event)
     if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(403).json({
         success: false,
         message: "Unauthorized",
@@ -149,13 +196,19 @@ const updateEvent = async (req, res) => {
       delete req.body.event_date;
     }
 
-    await Event.updateOne({ _id: event._id }, req.body);
+    await Event.updateOne({ _id: event._id }, req.body, { session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(200).json({
       success: true,
       message: "Event updated successfully",
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,
@@ -165,16 +218,27 @@ const updateEvent = async (req, res) => {
 };
 
 const addGuestToList = async (req, res) => {
+  const session = await mongoose.startSession();
+    
   try {
-    const event = await Event.findById(req.params.id);
-    if (!event)
+    session.startTransaction();
+
+    const event = await Event.findById(req.params.id).session(session);
+    if (!event) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(404).json({
         success: false,
         message: "Event not found",
       });
+    }
 
     // Check if user is authorized (owner of the event)
     if (!isUserAuthorized(res.locals.user.id, event.userId)) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(403).json({
         success: false,
         message: "Unauthorized",
@@ -185,13 +249,19 @@ const addGuestToList = async (req, res) => {
     req.body.number = req.body.number || 1;
 
     event.guestList.push(req.body);
-    await event.save();
+    await event.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(200).json({
       success: true,
       message: "Event guest list updated successfully",
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).json({
       success: false,
       error: err.message,

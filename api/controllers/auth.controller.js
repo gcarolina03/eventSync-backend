@@ -1,22 +1,33 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { default: mongoose } = require("mongoose");
 const User = require("../models/user.model");
 const cloudinary = require("../../db/cloudinary");
 
 const signup = async (req, res) => {
-  const { email, password, first_name } = req.body;
-
+  const session = await mongoose.startSession();
+  
   try {
-		if (!email || !password || !first_name) {
+    session.startTransaction();
+
+    const { email, password, first_name } = req.body;
+
+    if (!email || !password || !first_name) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(400).json({
         success: false,
         message: "Email, password and first name are required",
       });
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).session(session);
 
     if (existingUser) {
+      await session.abortTransaction();
+      session.endSession();
+
       return res.status(400).json({
         success: false,
         message: "User already exists",
@@ -35,7 +46,10 @@ const signup = async (req, res) => {
 
     // Create the new user
     const newUser = new User(req.body);
-    await newUser.save();
+    await newUser.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     // Generate and return a JSON Web Token
     const token = generateToken(newUser.email);
@@ -45,10 +59,13 @@ const signup = async (req, res) => {
       user: newUser,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
     return res.status(500).send({
       success: false,
       error: err.message,
-      message: "User not created!",
+      message: "User not created",
     });
   }
 };
