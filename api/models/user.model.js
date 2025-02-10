@@ -46,7 +46,8 @@ const UserSchema = new Schema({
     ref: 'service'
   }],
   role: {
-    type: String
+    type: String,
+    default: 'user'
   }
 },
 { timestamps: false },
