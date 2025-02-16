@@ -8,9 +8,9 @@ router.get('/:id', checkAuth, getEvent)
 router.post('/', checkAuth, createEvent)
 
 router.delete('/:id', checkAuth, deleteEvent)
-router.delete("/:id/guest/:guestId", checkAuth, removeGuestFromList);
-
 router.put('/:id', checkAuth, updateEvent)
-router.put('/guest/:id', checkAuth, addGuestToList)
+
+router.put("/:id/guest", checkAuth, addGuestToList);
+router.delete("/:id/guest/:guestId", checkAuth, removeGuestFromList);
 
 module.exports = router
