@@ -7,7 +7,6 @@ const isUserAuthorized = (userId, serviceUserId) => userId.toString() == service
 
 const createService = async (req, res) => {
   const session = await mongoose.startSession();
-
   try {
     session.startTransaction();
 
@@ -16,7 +15,6 @@ const createService = async (req, res) => {
       categoryId,
       ...serviceData
     } = req.body;
-
     // Check if the user exists
     const user = await User.findById(userId).session(session);
     if (!user) {
@@ -44,7 +42,7 @@ const createService = async (req, res) => {
     }
 
     // Create a new service
-    const service = new Service(serviceData);
+    const service = new Service({ userId, categoryId, ...serviceData});
     await service.save({ session });
 
     // Add the service to the user's servicesCreated array
