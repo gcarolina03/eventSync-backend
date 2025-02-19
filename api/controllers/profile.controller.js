@@ -48,13 +48,16 @@ const editProfile = async (req, res) => {
       });
     }
 
-    if (req.first_name && req.first_name != '') {
-      user.first_name = req.first_name;
+    console.log(req.body);
+
+    if (req.body.first_name && req.body.first_name != '') {
+      console.log("hola");
+      user.first_name = req.body.first_name;
     }
 
-    if (req.last_name && req.last_name != "") {
-      console.log("hola");
-      user.last_name = req.last_name;
+    if (req.body.last_name && req.body.last_name != "") {
+      console.log("hola2");
+      user.last_name = req.body.last_name;
     }
 
     if (req.file) {
@@ -63,7 +66,9 @@ const editProfile = async (req, res) => {
     }
 
     if (req.body.password && req.body.password != "") {
-      const hashedPassword = bcrypt.hashSync(password, 10);
+      console.log("hola3");
+
+      const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 			user.password = hashedPassword;
     }
 
