@@ -211,7 +211,23 @@ const updateService = async (req, res) => {
 
     // Handle file upload if present
     if (req.file) {
-      req.body.img_url = req.file.path;
+      const result = await cloudinary.uploader.upload(req.file.path);
+      req.body.img_url = result.secure_url;
+    } else {
+      delete req.body.img_url;
+    }
+
+    if (!req.body.latitude || !req.body.longitude) {
+      delete req.body.latitude;
+      delete req.body.longitude;
+    }
+
+    // Conditional deletion of certain fields based on categoryId
+    if (req.categoryId != "679fae9b2fde9e5bbd6ceeee") { //LOCATION
+      delete req.body.max_capacity;
+      delete req.body.min_capacity;
+      delete req.body.start_time;
+      delete req.body.end_time;
     }
 
     await Service.updateOne({ _id: service._id }, req.body, { session });
