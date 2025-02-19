@@ -1,5 +1,6 @@
 const Review = require("../models/review.model");
 const Service = require("../models/service.model");
+const { default: mongoose } = require("mongoose");
 
 // Create a new review
 const createReview = async (req, res) => {
