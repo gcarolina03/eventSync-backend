@@ -25,7 +25,7 @@ const createEvent = async (req, res) => {
     }
 
     // Create a new event
-    const event = new Event(eventData);
+    const event = new Event({ userId, ...eventData});
     await event.save({ session });
 
     // Add the event to the user's eventsCreated array
@@ -219,7 +219,6 @@ const updateEvent = async (req, res) => {
 
 const addGuestToList = async (req, res) => {
   const session = await mongoose.startSession();
-    
   try {
     session.startTransaction();
 
