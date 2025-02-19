@@ -25,7 +25,6 @@ const editProfile = async (req, res) => {
   try {
     session.startTransaction();
 
-		console.log(req.body)
     const userId = res.locals.user._id;
 
     if (!userId) {
@@ -38,8 +37,6 @@ const editProfile = async (req, res) => {
       });
     }
 
-		console.log(userId)
-
     const user = await User.findById(userId).session(session);
     if (!user) {
       await session.abortTransaction();
@@ -50,8 +47,6 @@ const editProfile = async (req, res) => {
         message: "User not found",
       });
     }
-
-		console.log(user);
 
     if (req.first_name && req.first_name != '') {
       user.first_name = req.first_name;
@@ -80,7 +75,6 @@ const editProfile = async (req, res) => {
     return res.status(200).json({
       success: true,
       user,
-			token,
     });
   } catch (err) {
 		await session.abortTransaction();
