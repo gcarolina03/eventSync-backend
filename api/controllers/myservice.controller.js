@@ -31,10 +31,17 @@ const createService = async (req, res) => {
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path);
       serviceData.img_url = result.secure_url;
-    }
+    } else {
+			delete serviceData.img_url
+		}
+
+		if(!serviceData.latitude || !serviceData.longitude) {
+			delete serviceData.latitude
+			delete serviceData.longitude
+		}
 
     // Conditional deletion of certain fields based on categoryId
-    if (categoryId != "64ac73ab173c1b223d20f928") {
+    if (categoryId != "679fae9b2fde9e5bbd6ceeee") { //LOCATION
       delete serviceData.max_capacity;
       delete serviceData.min_capacity;
       delete serviceData.start_time;
