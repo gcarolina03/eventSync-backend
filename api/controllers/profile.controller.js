@@ -57,7 +57,7 @@ const editProfile = async (req, res) => {
       user.last_name = req.body.last_name;
     }
 
-    if (req.file) {
+    if (req.file && req.file.path) {
       const result = await cloudinary.uploader.upload(req.file.path);
       user.img_url = result.secure_url;
     }
