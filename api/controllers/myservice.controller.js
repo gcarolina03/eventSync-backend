@@ -28,7 +28,7 @@ const createService = async (req, res) => {
     }
 
     // Handle file upload if present
-    if (req.file) {
+    if (req.file && req.file.path) {
       const result = await cloudinary.uploader.upload(req.file.path);
       serviceData.img_url = result.secure_url;
     } else {
@@ -210,7 +210,7 @@ const updateService = async (req, res) => {
     }
 
     // Handle file upload if present
-    if (req.file) {
+    if (req.file && req.file.path) {
       const result = await cloudinary.uploader.upload(req.file.path);
       req.body.img_url = result.secure_url;
     } else {
