@@ -180,7 +180,7 @@ const updateRequestState = async (req, res) => {
     session.endSession();
 
     return res.status(200).json({
-      success: false,
+      success: true,
       request,
     });
   } catch (err) {
