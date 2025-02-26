@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const Notification = require("../models/Notification");
+const Notification = require("../models/notification.model");
 const User = require("../models/user.model");
 const e = require("express");
 
