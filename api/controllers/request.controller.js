@@ -56,6 +56,31 @@ const createRequest = async (req, res) => {
     event.eventRequests.push(request._id);
     await event.save({ session });
 
+    // Crear la notificación para el propietario del servicio
+    // Aquí asumimos que el propietario del servicio (service.userId) debe ser notificado
+    const notification = new Notification({
+      userId: service.userId,
+      message: "newRequest",
+      data: {
+        requestId: request._id,
+        event: {
+          _id: event._id,
+          title: event.title,
+        },
+        service: {
+          _id: service._id,
+          title: service.title,
+        },
+      },
+      read: false,
+    });
+    await notification.save({ session });
+
+    const io = req.app.get("io");
+    if (io) {
+      io.to(service.userId.toString()).emit("newNotification", notification);
+    }
+
     await session.commitTransaction();
     session.endSession();
 
