@@ -1,10 +1,11 @@
 const router = require("express").Router();
-const { createNotification, getNotificationsByUser, markNotificationAsRead, deleteNotification } = require("../controllers/notification.controller");
+const { createNotification, getLatestNotifications, getAllNotifications, markNotificationAsRead, deleteNotification } = require("../controllers/notification.controller");
 const { checkAuth, checkAdmin } = require("../../middlewares/auth");
 
 router.post('/', createNotification);
 
-router.get('/user/:userId', checkAuth, getNotificationsByUser);
+router.get("/latest/:userId?", checkAuth, getLatestNotifications);
+router.get("/all/:userId?", checkAuth, getAllNotifications);
 
 router.put('/:id/read', checkAuth, markNotificationAsRead);
 

@@ -44,8 +44,39 @@ const createNotification = async (req, res) => {
   }
 };
 
-const getNotificationsByUser = async (req, res) => {
-  const userId = req.params.userId;
+const getLatestNotifications = async (req, res) => {
+  const userId = req.params.userId || res.locals.user?.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const notifications = await Notification.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(5);  
+
+    return res.status(200).json({
+      success: true,
+      notifications
+    });
+  } catch (err) {
+    return res.status(500).json({ 
+      success: false, 
+      error: err.message,
+      message: "Error fetching latest notifications"
+    });
+  }
+}
+const getAllNotifications = async (req, res) => {
+  const userId = req.params.userId || res.locals.user?.id;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
 
   try {
     // check if user exists
@@ -57,13 +88,20 @@ const getNotificationsByUser = async (req, res) => {
       });
     }
 
-    const notifications = await Notification
-      .find({ userId })
-      .sort({ createdAt: -1, });
+    const total = await Notification.countDocuments({ userId });
+    const notifications = await Notification.find({ userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     return res.status(200).json({
       success: true,
-      notifications
+      notifications,
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (err) {
     return res.status(500).json({ 
@@ -149,7 +187,8 @@ const deleteNotification = async (req, res) => {
 
 module.exports = {
   createNotification,
-  getNotificationsByUser,
+  getLatestNotifications,
+  getAllNotifications,
   markNotificationAsRead,
   deleteNotification,
 };
