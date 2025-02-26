@@ -3,6 +3,7 @@ const Request = require("../models/request.model");
 const Service = require("../models/service.model");
 const Event = require("../models/event.model");
 const User = require("../models/user.model");
+const Notification = require("../models/notification.model");
 
 const createRequest = async (req, res) => {
   const session = await mongoose.startSession();
