@@ -211,7 +211,7 @@ const updateRequestState = async (req, res) => {
     const io = req.app.get("io");
 
     // Enviar notificaciones según el estado de la solicitud
-    if (state == "rejected" || state == "denied") {
+    if (state == "cancelled" ) {
       // Notificar al usuario que realizó la solicitud (request.userId debe existir en el modelo Request)
       const notification = new Notification({
         userId: event.userId, 
@@ -233,12 +233,12 @@ const updateRequestState = async (req, res) => {
       await notification.save({ session });
 
       if (io) {
-        io.to(request.userId.toString()).emit("newNotification", notification);
+        io.to(event.userId.toString()).emit("newNotification", notification);
       }
     } else if (state == "confirmed") {
       // Enviar notificación para solicitudes confirmadas
       const notification = new Notification({
-        userId: request.userId,
+        userId: event.userId,
         message: 'requestConfirmed',
         data: { 
           requestId: request._id, 
@@ -256,7 +256,7 @@ const updateRequestState = async (req, res) => {
       
        await notification.save({ session });
        if (io) {
-        io.to(request.userId.toString()).emit("newNotification", notification);
+        io.to(event.userId.toString()).emit("newNotification", notification);
        }
     }
 
