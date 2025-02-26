@@ -95,7 +95,18 @@ const getEvent = async (req, res) => {
 
 const getAllUserEvents = async (req, res) => {
   try {
-    const events = await Event.find({ userId: res.locals.user.id });
+    const events = await Event.find({ userId: res.locals.user.id })
+      .populate({
+        path: "eventRequests",
+        populate: {
+          path: "serviceId",
+          populate: {
+            path: "categoryId",
+          },
+        },
+      })
+      .exec();
+      
     return res.status(200).json({
       success: true,
       events,
