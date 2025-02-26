@@ -12,16 +12,21 @@ connectToDatabase()
 
 const start = async () => {
   try {
-    app.use(cors()).use(morgan("dev")).use(express.json());
-
     app
-      .get("/", (req, res) => res.send("Welcome to EventSync API with MONGO"))
+      .use(cors())
+      .use(morgan("dev"))
+      .use(express.json());
+
+    app.get("/", (req, res) => res.send("Welcome to EventSync API with MONGO"))
       .use("/api", router);
 
     // Creamos el servidor HTTP con Express
     const server = http.createServer(app);
     // Inicializamos Socket.io sobre el servidor HTTP
     const io = new Server(server, { cors: { origin: "*" } });
+
+    // Permitir que los controllers puedan acceder a la instancia de io
+    app.set("io", io);
 
     io.on("connection", (socket) => {
       console.log(`Socket connected: ${socket.id}`);
@@ -38,11 +43,9 @@ const start = async () => {
 
     const PORT = process.env.EXPRESS_PORT || 2222;
     server.listen(PORT, () => {
-      console.info(`Mongo API running on port ${PORT}`);
+      console.info(`Mongo API and Socket.io running on port ${PORT}`);
     });
-    console.info(
-      `Mongo API and Socket.io running on port ${process.env.EXPRESS_PORT}`
-    );
+
   } catch (err) {
     throw new Error(`Cannot start mongo on port ${process.env.EXPRESS_PORT}, ${err}`)
   }
