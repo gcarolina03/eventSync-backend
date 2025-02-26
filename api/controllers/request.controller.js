@@ -147,10 +147,12 @@ const updateRequestState = async (req, res) => {
     const { id } = req.params;
     const { state } = req.body;
 
-    const request = await Request.findById(id).populate({
-      path: "serviceId",
-      populate: { path: "categoryId" },
-    }).session(session);
+    const request = await Request.findById(id)
+      .populate({
+        path: "serviceId",
+        populate: { path: "categoryId" },
+      })
+      .session(session);
 
     if (!request) {
       await session.abortTransaction();
@@ -199,7 +201,63 @@ const updateRequestState = async (req, res) => {
 
     // Update the event and request state
     await Event.updateOne({ _id: event._id }, dataEvent, { session });
-    await Request.updateOne({ _id: request._id }, { state: req.body.state }, { session });
+    await Request.updateOne(
+      { _id: request._id },
+      { state: req.body.state },
+      { session }
+    );
+
+    const io = req.app.get("io");
+
+    // Enviar notificaciones según el estado de la solicitud
+    if (state == "rejected" || state == "denied") {
+      // Notificar al usuario que realizó la solicitud (request.userId debe existir en el modelo Request)
+      const notification = new Notification({
+        userId: event.userId, 
+        message: "requestRejected",
+        data: {
+          requestId: request._id,
+          event: {
+            _id: event._id,
+            title: event.title,
+          } ,
+          service: {
+            _id: request.serviceId._id,
+            title: request.serviceId.title,
+          },
+        },
+        read: false,
+      });
+
+      await notification.save({ session });
+
+      if (io) {
+        io.to(request.userId.toString()).emit("newNotification", notification);
+      }
+    } else if (state == "confirmed") {
+      // Enviar notificación para solicitudes confirmadas
+      const notification = new Notification({
+        userId: request.userId,
+        message: 'requestConfirmed',
+        data: { 
+          requestId: request._id, 
+          event: { 
+            id: event._id,
+            title: event.title
+          },
+          service: {
+            id: request.serviceId._id,
+            title: request.serviceId.title
+          },
+        },
+        read: false
+       });
+      
+       await notification.save({ session });
+       if (io) {
+        io.to(request.userId.toString()).emit("newNotification", notification);
+       }
+    }
 
     await session.commitTransaction();
     session.endSession();
