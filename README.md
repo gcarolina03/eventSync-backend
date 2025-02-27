@@ -41,31 +41,37 @@ Here are some usage examples to get you started:
 Feel free to explore the application and experiment with different features.
 
 
-| Endpoint                      | Request           | Description                                                   | Role                 |
-|-------------------------------|-------------------|---------------------------------------------------------------|----------------------|
-| `/auth/signup`                | POST              | Creates a new user account and generates a session to         | Guest                |
-| `/auth/login`                 | POST              | Authenticates user credentials and generates a session token  | Guest                |
-| `/profile`                    | GET               | Fetches details of the logged user                            | User                 |
-| `/profile/services`           | GET               | Fetches details of all services of the logged user            | User                 |
-| `/profile/services/:id`       | GET               | Fetches details of a specific service of the logged user      | User                 |
-| `/profile/services`           | POST              | Creates a new service                                         | User                 |
-| `/profile/services/:id`       | DELETE            | Deletes a specific service                                    | User                 |
-| `/profile/services/:id`       | PUT               | Update a specific service                                     | User                 |
-| `/events`                     | GET               | Fetches a list of all events of the logged user               | User                 |
-| `/events/:id`                 | GET               | Fetches details of a specific event of the logged user        | User                 |
-| `/events`                     | POST              | Creates a new event                                           | User                 |
-| `/events/:id`                 | DELETE            | Deletes a specific event                                      | User                 |
-| `/events/:id/guest/:guestId`  | DELETE            | Deletes a specific guest from the list of the event           | User                 |
-| `/events/:id`                 | PUT               | Update a specific event                                       | User                 |
-| `/events/:id/guest/:guestId`  | PUT               | Update a specific guest from the list of the event            | User                 |
-| `/categories`                 | GET               | Fetches a list of all categories                              | Guest                |
-| `/categories`                 | POST              | Creates a new category                                        | Admin                |
-| `/services`                   | GET               | Fetches a list of all services                                | Guest                |
-| `/reviews`                    | POST              | Creates a new review                                          | User                 |
-| `/reviews/:id`                | PUT               | Update a existing review                                      | User                 |
-| `/requests`                   | GET               | Fetches a list of all requests service of the logged user     | User                 |
-| `/requests`                   | POST              | Creates a new request                                         | User                 |
-| `/requests/:id`               | PUT               | Update state of a request                                     | User                 |
+| Endpoint                         | Request           | Description                                                   | Role                 |
+|----------------------------------|-------------------|---------------------------------------------------------------|----------------------|
+| `/auth/signup`                   | POST              | Creates a new user account and generates a session to         | Guest                |
+| `/auth/login`                    | POST              | Authenticates user credentials and generates a session token  | Guest                |
+| `/profile`                       | GET               | Fetches details of the logged user                            | User                 |
+| `/profile`                       | PUT               | Updates the profile of the logged user                        | User                 |
+| `/profile/services`              | GET               | Fetches details of all services of the logged user            | User                 |
+| `/profile/services/:id`          | GET               | Fetches details of a specific service of the logged user      | User                 |
+| `/profile/services`              | POST              | Creates a new service                                         | User                 |
+| `/profile/services/:id`          | DELETE            | Deletes a specific service                                    | User                 |
+| `/profile/services/:id`          | PUT               | Update a specific service                                     | User                 |
+| `/events`                        | GET               | Fetches a list of all events of the logged user               | User                 |
+| `/events/:id`                    | GET               | Fetches details of a specific event of the logged user        | User                 |
+| `/events`                        | POST              | Creates a new event                                           | User                 |
+| `/events/:id`                    | DELETE            | Deletes a specific event                                      | User                 |
+| `/events/:id/guest/:guestId`     | DELETE            | Deletes a specific guest from the list of the event           | User                 |
+| `/events/:id`                    | PUT               | Update a specific event                                       | User                 |
+| `/events/:id/guest`              | PUT               | Update a specific guest from the list of the event            | User                 |
+| `/categories`                    | GET               | Fetches a list of all categories                              | Guest                |
+| `/categories`                    | POST              | Creates a new category                                        | Admin                |
+| `/services`                      | GET               | Fetches a list of all services                                | Guest                |
+| `/reviews`                       | POST              | Creates a new review                                          | User                 |
+| `/reviews/:id`                   | PUT               | Update a existing review                                      | User                 |
+| `/requests`                      | GET               | Fetches a list of all requests service of the logged user     | User                 |
+| `/requests`                      | POST              | Creates a new request                                         | User                 |
+| `/requests/:id`                  | PUT               | Update state of a request                                     | User                 |
+| `/notifications`                 | POST              | Creates a new notification                                   | -                    |
+| `/notifications/latest/:userId?` | GET           | Fetches the latest notifications for the logged user or a specific user | User                 |
+| `/notifications/all/:userId?`    | GET              | Fetches all notifications for the logged user or a specific user | User                 |
+| `/notifications/:id/read`        | PUT               | Marks a specific notification as read                        | User                 |
+| `/notifications/:id`             | DELETE            | Deletes a specific notification                              | Admin                |
 
 
 ## Data Model
@@ -142,6 +148,16 @@ Feel free to explore the application and experiment with different features.
 | userId*          | ObjectId (ref: users)    |
 | thumb*           | String                   |
 
+### Collection "notifications"
+| Column    | Type                        | Description                                  |
+|-----------|-----------------------------|----------------------------------------------|
+| _id       | ObjectId (Primary Key)      | Unique identifier for the notification      |
+| userId*   | ObjectId (ref: users)       | The user who receives the notification      |
+| message*  | String                      | The notification message                    |
+| data      | Object                       | Additional data related to the notification |
+| read      | Boolean (default: false)     | Indicates whether the notification is read  |
+| createdAt | Date                        | Timestamp of creation (auto-generated)      |
+| updatedAt | Date                        | Timestamp of last update (auto-generated)   |
 
 ## Author
 
@@ -157,7 +173,7 @@ This project was built using:
 - **NodeJS**: Runtime environment that allows executing server-side applications using JavaScript.
 - **Mongoose**: MongoDB object modeling tool for NodeJS, providing a simple and flexible way to interact with MongoDB databases.
 - **Express**: Fast and minimalist web application framework for NodeJS, enabling the creation of robust and scalable web applications and APIs.
-
+- **Socket.io**: Enables real-time, bidirectional communication between clients and the server, used for live notifications and updates.
 
 ## Contributing
 
