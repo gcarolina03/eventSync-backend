@@ -172,8 +172,12 @@ This project was built using:
 
 - **NodeJS**: Runtime environment that allows executing server-side applications using JavaScript.
 - **Mongoose**: MongoDB object modeling tool for NodeJS, providing a simple and flexible way to interact with MongoDB databases.
+- **MongoDB**: NoSQL database used to store user data, events, services, and more.
 - **Express**: Fast and minimalist web application framework for NodeJS, enabling the creation of robust and scalable web applications and APIs.
 - **Socket.io**: Enables real-time, bidirectional communication between clients and the server, used for live notifications and updates.
+- **Cloudinary**: Media management platform for uploading, storing, and manipulating images and videos.
+- **jsonwebtoken (JWT)**: Library for creating and verifying JSON Web Tokens for secure user authentication.
+- **multer**: Middleware for handling multipart/form-data, used for file uploads like images in the backend.
 
 ## Contributing
 
