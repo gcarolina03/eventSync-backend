@@ -10,7 +10,7 @@ echo "Checking if Node.js is installed..."
 if ! command -v node &>/dev/null; then
   echo "Node.js not found. Installing Node.js..."
   # Install Node.js and npm
-  curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+  curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
   sudo apt-get install -y nodejs
 else
   echo "Node.js is already installed."
