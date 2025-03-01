@@ -189,15 +189,15 @@ Feel free to explore the application and experiment with different features.
 | thumb*           | String                   |
 
 ### Collection "notifications"
-| Column    | Type                        | Description                                  |
-|-----------|-----------------------------|----------------------------------------------|
-| _id       | ObjectId (Primary Key)      | Unique identifier for the notification      |
-| userId*   | ObjectId (ref: users)       | The user who receives the notification      |
-| message*  | String                      | The notification message                    |
-| data      | Object                       | Additional data related to the notification |
-| read      | Boolean (default: false)     | Indicates whether the notification is read  |
-| createdAt | Date                        | Timestamp of creation (auto-generated)      |
-| updatedAt | Date                        | Timestamp of last update (auto-generated)   |
+| Column    | Type                        |
+|-----------|-----------------------------|
+| _id       | ObjectId (Primary Key)      |
+| userId*   | ObjectId (ref: users)       |
+| message*  | String                      |
+| data      | Object                      |
+| read      | Boolean (default: false)    |
+| createdAt | Date                        |
+| updatedAt | Date                        |
 
 ## Author
 
