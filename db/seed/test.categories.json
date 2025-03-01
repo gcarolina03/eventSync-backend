@@ -1,0 +1,35 @@
+[{
+  "_id": "67c08789240c4f70451eb4e6",
+  "title": "production",
+  "icon": "production"
+},
+{
+  "_id": "67c08789240c4f70451eb4e7",
+  "title": "photographer",
+  "icon": "camera"
+},
+{
+  "_id": "67c08789240c4f70451eb4e9",
+  "title": "eventStaff",
+  "icon": "group-people"
+},
+{
+  "_id": "67c08789240c4f70451eb4ea",
+  "title": "entertaintment",
+  "icon": "face-smile"
+},
+{
+  "_id": "67c08789240c4f70451eb4eb",
+  "title": "catering",
+  "icon": "food"
+},
+{
+  "_id": "67c08789240c4f70451eb4ec",
+  "title": "decor",
+  "icon": "couch"
+},
+{
+  "_id": "679fae9b2fde9e5bbd6ceeee",
+  "icon": "map",
+  "title": "location"
+}]

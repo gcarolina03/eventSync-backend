@@ -1,0 +1,11 @@
+[{
+  "_id": "67c086b9ecc8b21614d08be7",
+  "first_name": "Admin",
+  "last_name": "Test",
+  "email": "admin@test.com",
+  "password": "$2b$10$QFfktvPMOdJNh4wlXak0xe1q9DqLEjhnPV4am6bbIJ3vi8TiW0jKe",
+  "img_url": "https://res.cloudinary.com/dhveca8ba/image/upload/v1740678430/jnvyhkopko8x61gk1a20.png",
+  "eventsCreated": [],
+  "servicesCreated": [],
+  "role": "admin"
+}]
