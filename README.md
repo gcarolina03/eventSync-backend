@@ -24,8 +24,48 @@ To run this application, make sure you have the following:
 ## Installation
 
 1. Clone the repository
-1. Install the required packages: **`npm i`**
-3. Create a **`.env`** file based on the provided **`.env.example`** file. Specify the values for the environment variables required by the application to work.
+2. **Set up MongoDB Atlas**
+  - Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and create an account if you don't have one already.
+  - Once logged in, create a new cluster (you can choose the free tier).
+  - After creating the cluster, go to the **Database Access** section and create a new user with the required permissions (read and write to any database).
+  - Go to the **Network Access** section and allow your IP address or select "Allow access from anywhere" (0.0.0.0/0).
+  - In the **Clusters** section, click on **Connect** and select **Connect your application**. Copy the provided connection string URI.
+    - Example: 
+      ```
+      mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority
+      ```
+3. **Set up Cloudinary**
+  - If you don't have a Cloudinary account, go to [Cloudinary](https://cloudinary.com/) and sign up for a free account.
+  - Once logged in, go to your **Dashboard** and find your **Cloud Name**, **API Key**, and **API Secret** under **Account Details**.
+  - Make sure you have the **Cloudinary credentials** (Cloud Name, API Key, API Secret) ready as the script will ask for them when you run it.
+
+3. **Run the `setup.sh` script**
+  - **Important**: Ensure you have the Cloudinary and MongoDB credentials ready, as the script will ask for them during execution.
+
+  **Steps to run the script:**
+  - Make sure the script has execution permissions:
+    ```bash
+    chmod +x setup.sh
+    ```
+  - Then, execute the script:
+    ```bash
+    ./setup.sh
+    ```
+  - The script will create a `.env` file and will prompt you for the MongoDB Atlas and Cloudinary credentials. It will then add the credentials to the `.env` file.
+
+4. **Run the seeders**
+  - To set up initial data (e.g., categories, users), you can run the configuration script:
+    ```bash
+    npm run seed
+    ```
+    This will delete existing data in the `categories` and `users` collections and insert the default configuration.
+5. **Start the server**
+  - Once the seeders have been executed and the data has been inserted, you can start the development server:
+    ```bash
+    npm run dev
+    ```
+  - The application will now be running on `http://localhost:3000` (or the port specified in your `.env` file).
+
 
 ## Usage and Endpoints
 
